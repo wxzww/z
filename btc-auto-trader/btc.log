@@ -1,0 +1,127 @@
+nohup: ignoring input
+2026-06-11 03:38:21 | INFO     | btc_trader.main.main:103 | ============================================================
+2026-06-11 03:38:21 | INFO     | btc_trader.main.main:104 | BTC自动化交易系统启动
+2026-06-11 03:38:21 | INFO     | btc_trader.main.main:105 | 配置: config.yaml
+2026-06-11 03:38:21 | INFO     | btc_trader.main.main:106 | 模式: ⚠️ 主网
+2026-06-11 03:38:21 | INFO     | btc_trader.main.main:107 | 品种: BTCUSDT
+2026-06-11 03:38:21 | INFO     | btc_trader.main.main:108 | 杠杆: 10x
+2026-06-11 03:38:21 | INFO     | btc_trader.main.main:109 | ============================================================
+2026-06-11 03:38:21 | INFO     | btc_trader.pipeline.__init__:41 | TradingPipeline初始化完成
+2026-06-11 03:38:21 | INFO     | btc_trader.pipeline.startup:302 | 系统启动中...
+2026-06-11 03:38:21 | INFO     | btc_trader.pipeline.startup:305 | 测试Binance连接...
+2026-06-11 03:38:21 | INFO     | btc_trader.pipeline.startup:308 | Binance连接正常
+2026-06-11 03:38:21 | INFO     | btc_trader.pipeline.startup:312 | 测试 LLM API 连接 (OpenRouter)...
+2026-06-11 03:38:25 | INFO     | btc_trader.pipeline.startup:315 | LLM API 连接正常
+2026-06-11 03:38:25 | INFO     | btc_trader.pipeline.startup:323 | 杠杆设置: 10x
+2026-06-11 03:38:25 | WARNING  | btc_trader.pipeline.startup:332 | 设置杠杆/保证金模式: APIError(code=-4047): Margin type cannot be changed if there exists open orders.
+2026-06-11 03:38:25 | INFO     | btc_trader.db.initialize:64 | 数据库初始化完成: storage/trading.db
+2026-06-11 03:38:25 | INFO     | btc_trader.pipeline.startup:336 | 数据库初始化完成
+2026-06-11 03:38:25 | INFO     | btc_trader.pipeline.startup:339 | 执行初始全周期分析...
+2026-06-11 03:38:25 | INFO     | btc_trader.pipeline.run:56 | ========== 流水线启动 trigger=4h ==========
+2026-06-11 03:38:25 | INFO     | btc_trader.pipeline.run:65 | Step 2: 数据采集
+2026-06-11 03:38:25 | INFO     | btc_trader.data.fetch_klines:118 | K线数据更新 [4h]: 100根, 最新价=62338.60
+2026-06-11 03:38:25 | INFO     | btc_trader.data.fetch_klines:118 | K线数据更新 [1h]: 100根, 最新价=62346.00
+2026-06-11 03:38:25 | INFO     | btc_trader.data.fetch_klines:118 | K线数据更新 [15m]: 100根, 最新价=62338.60
+2026-06-11 03:38:25 | INFO     | btc_trader.pipeline.run:71 | Step 3: 状态同步与组装
+2026-06-11 03:38:25 | INFO     | btc_trader.state.build:29 | 开始组装状态 [trigger=4h]
+2026-06-11 03:38:25 | INFO     | btc_trader.data.fetch_klines:118 | K线数据更新 [4h]: 100根, 最新价=62338.60
+2026-06-11 03:38:26 | WARNING  | btc_trader.state.build:70 | 状态一致性: CRITICAL: 有持仓但无止损单，需要立即补挂
+2026-06-11 03:38:26 | INFO     | btc_trader.state.build:87 | 状态组装完成: price=62337.40, positions=1, orders=4, balance=146.47
+2026-06-11 03:38:26 | CRITICAL | btc_trader.pipeline._pre_check:157 | ⚠️ 有持仓但没有止损单！
+2026-06-11 03:38:26 | INFO     | btc_trader.executor._place_algo_order:120 | Algo挂单成功: 紧急补挂止损(多), type=STOP_MARKET, triggerPrice=59041.36, qty=0.005, algoId=4000001546287600
+2026-06-11 03:38:26 | CRITICAL | btc_trader.pipeline._emergency_stop_loss:188 | 紧急止损已挂: stop=59041.36, qty=0.005
+2026-06-11 03:38:26 | INFO     | btc_trader.pipeline.run:81 | Step 4: 调用LLM策略分析
+2026-06-11 03:38:26 | INFO     | btc_trader.strategy.analyze:51 | 调用 LLM API [attempt=1] model=anthropic/claude-opus-4.6, trigger=4h, price=62337.4
+2026-06-11 03:38:55 | INFO     | btc_trader.strategy.analyze:78 | LLM 响应耗时: 29.32s, status=200
+2026-06-11 03:38:55 | INFO     | btc_trader.strategy._log_decision:141 | ───────────────────────────────────────────────────────
+2026-06-11 03:38:55 | INFO     | btc_trader.strategy._log_decision:142 | 📊 LLM 策略决策
+2026-06-11 03:38:55 | INFO     | btc_trader.strategy._log_decision:143 |   方向: neutral  |  信心: 2 ⭐⭐  |  行情类型: transitioning
+2026-06-11 03:38:55 | INFO     | btc_trader.strategy._log_decision:146 |   共振: ❌ 无共振
+2026-06-11 03:38:55 | INFO     | btc_trader.strategy._log_decision:149 |   4H: 死叉，EMA15(62073)在EMA60(64539)下方，差距2466点，EMA15向下，EMA60向下，但MACD柱状图由负转正且扩大(130.2)，空头动能衰减中
+2026-06-11 03:38:55 | INFO     | btc_trader.strategy._log_decision:150 |   1H: 死叉但即将金叉，EMA15(61874)接近EMA60(61991)仅差118点，EMA15向上，MACD金叉且柱状图扩大(152.7)，RSI 58偏多
+2026-06-11 03:38:55 | INFO     | btc_trader.strategy._log_decision:151 |  15M: 金叉，EMA15(62015)在EMA60(61793)上方，差距222点，MACD柱状图扩大，RSI 64，短期多头趋势明确
+2026-06-11 03:38:55 | INFO     | btc_trader.strategy._log_decision:160 |   压力位: 62840 / 64250  |  支撑位: 61500 / 60692
+2026-06-11 03:38:55 | INFO     | btc_trader.strategy._log_decision:165 |   逻辑: 4H大方向仍是死叉看空，但MACD空头动能明显衰减，柱状图转正扩大，属于趋势转换初期。1H即将金叉+15M已金叉，小周期反弹信号明确，但这属于'场景C：4H死叉+小周期金叉=大跌中反弹'，不宜重仓做多。当前已有0.005多仓浮盈约1美元，属于轻仓试探性质，可持有但必须严格止损。关键观察1H能否完成金叉确认转势。
+2026-06-11 03:38:55 | INFO     | btc_trader.strategy._log_decision:169 |   操作 (5 条):
+2026-06-11 03:38:55 | INFO     | btc_trader.strategy._log_decision:189 |     [1] place_stop_loss  side=sell  price=61050  qty=5%  SL=61050  TP=62840
+2026-06-11 03:38:55 | INFO     | btc_trader.strategy._log_decision:191 |         原因: CRITICAL：当前持仓无止损单！立即补挂止损。止损设在15M近期低点61068下方，约亏损1.1%入场价，风险可控。现有的60500止损单是algo单但quantity=0.005覆盖全仓，但stop_price=60500距离过远(2.65%)，需要更紧的止损保护
+2026-06-11 03:38:55 | INFO     | btc_trader.strategy._log_decision:189 |     [2] cancel_order  cancelId=4000001546080287
+2026-06-11 03:38:55 | INFO     | btc_trader.strategy._log_decision:191 |         原因: 原60500止损距离过远(2.65%)，替换为61050更合理的止损位（15M前低61068下方）
+2026-06-11 03:38:55 | INFO     | btc_trader.strategy._log_decision:189 |     [3] cancel_order  cancelId=1038623722165
+2026-06-11 03:38:55 | INFO     | btc_trader.strategy._log_decision:191 |         原因: 61500的限价买单：4H仍是死叉，不应在大趋势看空时继续加仓做多。当前已有持仓，不宜再挂加仓单
+2026-06-11 03:38:55 | INFO     | btc_trader.strategy._log_decision:189 |     [4] cancel_order  cancelId=1038623896239
+2026-06-11 03:38:55 | INFO     | btc_trader.strategy._log_decision:191 |         原因: 60800的限价买单同理：4H死叉环境下不应继续挂多单加仓，场景C规则——大跌中反弹不做多加仓
+2026-06-11 03:38:55 | INFO     | btc_trader.strategy._log_decision:189 |     [5] move_take_profit
+2026-06-11 03:38:55 | INFO     | btc_trader.strategy._log_decision:191 |         原因: 保留64000止盈单(0.002)作为部分止盈，但将目标调整认知：第一压力位是1H近期高点62840，到达后应考虑减仓。64000的0.002止盈单可保留作为第二目标
+2026-06-11 03:38:55 | WARNING  | btc_trader.strategy._log_decision:196 |   ⚠️ 4H大方向仍是死叉，当前多仓属于逆势持仓，必须严格止损
+2026-06-11 03:38:55 | WARNING  | btc_trader.strategy._log_decision:196 |   ⚠️ 这是趋势转换初期，4H死叉+小周期金叉=反弹而非反转，第一个和第二个金叉往往会被打掉
+2026-06-11 03:38:55 | WARNING  | btc_trader.strategy._log_decision:196 |   ⚠️ 上方64539(4H EMA60)是强压力，即使反弹空间也有限
+2026-06-11 03:38:55 | WARNING  | btc_trader.strategy._log_decision:196 |   ⚠️ 需密切关注1H能否完成金叉，若1H金叉失败价格回落破61050应果断止损
+2026-06-11 03:38:55 | WARNING  | btc_trader.strategy._log_decision:196 |   ⚠️ 当前仓位约0.005BTC≈31U保证金，占总资金21%杠杆后风险敞口，实际资金占比约3.4%，风险尚可控
+2026-06-11 03:38:55 | INFO     | btc_trader.strategy._log_decision:198 | ───────────────────────────────────────────────────────
+2026-06-11 03:38:55 | INFO     | btc_trader.pipeline.run:86 | Step 5: 风控校验
+2026-06-11 03:38:55 | INFO     | btc_trader.pipeline.run:97 | Step 6: 执行操作
+2026-06-11 03:38:55 | WARNING  | btc_trader.executor._cancel_order:588 | 订单已不存在: 4000001546080287
+2026-06-11 03:38:55 | INFO     | btc_trader.executor.execute_actions:179 | 执行成功: cancel_order → already_gone
+2026-06-11 03:38:56 | INFO     | btc_trader.executor._cancel_order:584 | 撤单成功: 1038623722165
+2026-06-11 03:38:56 | INFO     | btc_trader.executor.execute_actions:179 | 执行成功: cancel_order → success
+2026-06-11 03:38:56 | INFO     | btc_trader.executor._cancel_order:584 | 撤单成功: 1038623896239
+2026-06-11 03:38:56 | INFO     | btc_trader.executor.execute_actions:179 | 执行成功: cancel_order → success
+2026-06-11 03:38:56 | INFO     | btc_trader.executor._place_algo_order:120 | Algo挂单成功: 移动止盈→62840, type=TAKE_PROFIT_MARKET, triggerPrice=62840, qty=0.005, algoId=4000001546290788
+2026-06-11 03:38:56 | INFO     | btc_trader.executor.execute_actions:179 | 执行成功: move_take_profit → success
+2026-06-11 03:38:56 | INFO     | btc_trader.executor._place_algo_order:120 | Algo挂单成功: 补挂止损(多), type=STOP_MARKET, triggerPrice=61050, qty=0.005, algoId=4000001546290907
+2026-06-11 03:38:56 | INFO     | btc_trader.executor.execute_actions:179 | 执行成功: place_stop_loss → success
+2026-06-11 03:38:56 | INFO     | btc_trader.pipeline.run:102 | Step 7: 记录与通知
+2026-06-11 03:38:56 | INFO     | btc_trader.pipeline.run:112 | ========== 流水线完成 trigger=4h 耗时=31.33s actions=5 ==========
+
+2026-06-11 03:38:56 | INFO     | btc_trader.pipeline.startup:348 | 系统启动完成
+2026-06-11 03:38:56 | INFO     | btc_trader.main.main:136 | 调度器启动，等待K线收盘触发...
+2026-06-11 03:38:56 | INFO     | btc_trader.main.main:137 | 调度任务:
+2026-06-11 03:38:56 | INFO     | btc_trader.main.main:139 |   4H分析: cron[hour='0,4,8,12,16,20', minute='0', second='3']
+2026-06-11 03:38:56 | INFO     | btc_trader.main.main:139 |   每日报告: cron[hour='0', minute='1']
+2026-06-11 03:38:56 | INFO     | btc_trader.main.main:139 |   健康检查: interval[0:05:00]
+2026-06-11 04:00:03 | INFO     | btc_trader.pipeline.run:56 | ========== 流水线启动 trigger=4h ==========
+2026-06-11 04:00:03 | INFO     | btc_trader.pipeline.run:65 | Step 2: 数据采集
+2026-06-11 04:00:03 | INFO     | btc_trader.data.fetch_klines:118 | K线数据更新 [4h]: 100根, 最新价=62657.40
+2026-06-11 04:00:03 | INFO     | btc_trader.pipeline.run:71 | Step 3: 状态同步与组装
+2026-06-11 04:00:03 | INFO     | btc_trader.state.build:29 | 开始组装状态 [trigger=4h]
+2026-06-11 04:00:03 | INFO     | btc_trader.data.fetch_klines:118 | K线数据更新 [4h]: 100根, 最新价=62657.50
+2026-06-11 04:00:04 | WARNING  | btc_trader.state.build:70 | 状态一致性: CRITICAL: 有持仓但无止损单，需要立即补挂
+2026-06-11 04:00:04 | INFO     | btc_trader.state.build:87 | 状态组装完成: price=62669.80, positions=1, orders=1, balance=146.47
+2026-06-11 04:00:04 | CRITICAL | btc_trader.pipeline._pre_check:157 | ⚠️ 有持仓但没有止损单！
+2026-06-11 04:00:04 | INFO     | btc_trader.executor._place_algo_order:120 | Algo挂单成功: 紧急补挂止损(多), type=STOP_MARKET, triggerPrice=59041.36, qty=0.005, algoId=4000001546431004
+2026-06-11 04:00:04 | CRITICAL | btc_trader.pipeline._emergency_stop_loss:188 | 紧急止损已挂: stop=59041.36, qty=0.005
+2026-06-11 04:00:04 | INFO     | btc_trader.pipeline.run:81 | Step 4: 调用LLM策略分析
+2026-06-11 04:00:04 | INFO     | btc_trader.strategy.analyze:51 | 调用 LLM API [attempt=1] model=anthropic/claude-opus-4.6, trigger=4h, price=62669.8
+2026-06-11 04:00:31 | INFO     | btc_trader.strategy.analyze:78 | LLM 响应耗时: 27.12s, status=200
+2026-06-11 04:00:31 | INFO     | btc_trader.strategy._log_decision:141 | ───────────────────────────────────────────────────────
+2026-06-11 04:00:31 | INFO     | btc_trader.strategy._log_decision:142 | 📊 LLM 策略决策
+2026-06-11 04:00:31 | INFO     | btc_trader.strategy._log_decision:143 |   方向: long  |  信心: 3 ⭐⭐⭐  |  行情类型: transitioning
+2026-06-11 04:00:31 | INFO     | btc_trader.strategy._log_decision:146 |   共振: ❌ 无共振
+2026-06-11 04:00:31 | INFO     | btc_trader.strategy._log_decision:149 |   4H: 死叉，EMA15(62113)在EMA60(64550)下方，差距2437点，EMA15走平，EMA60向下。MACD柱状图转正且扩张(170.91)，显示空头动能衰减，有反弹迹象。RSI 51.22中性。
+2026-06-11 04:00:31 | INFO     | btc_trader.strategy._log_decision:150 |   1H: 死叉但即将金叉，EMA15(61874)接近EMA60(61991)，差距仅118点，双线均向上。MACD金叉且柱状图扩张(152.74)，RSI 58.05偏多。
+2026-06-11 04:00:31 | INFO     | btc_trader.strategy._log_decision:151 |  15M: 金叉，EMA15(62015)在EMA60(61793)上方，差距222点，双线向上。MACD金叉柱状图扩张，RSI 64.08偏强。
+2026-06-11 04:00:31 | INFO     | btc_trader.strategy._log_decision:160 |   压力位: 62840.0 / 64250.0  |  支撑位: 61793.0 / 61069.0
+2026-06-11 04:00:31 | INFO     | btc_trader.strategy._log_decision:165 |   逻辑: 4H大方向仍为死叉看空，但MACD柱状图转正且扩张显示空头动能明显衰减，属于趋势转换行情。1H即将金叉+15M已金叉，小周期偏多但与4H大方向冲突，属于场景C（大跌中反弹）。当前已有多仓且浮盈，但系统提示无止损单（现有algo单stop_price=60500可能未被识别为止损），需确认止损保护。鉴于4H死叉未解除，不宜加仓，维持现有轻仓试探，严格管理风险。价格已涨至62670附近接近4H前高62840压力位，应考虑在接近压力位时部分止盈。
+2026-06-11 04:00:31 | INFO     | btc_trader.strategy._log_decision:169 |   操作 (3 条):
+2026-06-11 04:00:31 | INFO     | btc_trader.strategy._log_decision:189 |     [1] place_stop_loss  side=sell  qty=100%  SL=61050.0  newSL=61050.0
+2026-06-11 04:00:31 | INFO     | btc_trader.strategy._log_decision:191 |         原因: 系统提示无止损单。现有algo单在60500可能未被正确识别。补挂止损在15M前低61069下方61050，保护持仓。若已有60500止损生效则此单作为更紧的保护。
+2026-06-11 04:00:31 | INFO     | btc_trader.strategy._log_decision:189 |     [2] place_take_profit  side=sell  price=62820.0  qty=50%
+2026-06-11 04:00:31 | INFO     | btc_trader.strategy._log_decision:191 |         原因: 第一止盈设在4H前高62840附近(62820)，平一半仓位锁定利润。4H死叉未解除，反弹至前高压力位应部分止盈。
+2026-06-11 04:00:31 | INFO     | btc_trader.strategy._log_decision:189 |     [3] hold
+2026-06-11 04:00:31 | INFO     | btc_trader.strategy._log_decision:191 |         原因: 4H死叉+小周期金叉属于大跌中反弹场景，不加仓。维持现有轻仓(约21%含杠杆)，等待4H趋势转换确认。
+2026-06-11 04:00:31 | WARNING  | btc_trader.strategy._log_decision:196 |   ⚠️ 4H仍为死叉，当前反弹可能只是下跌中继，不可重仓追多
+2026-06-11 04:00:31 | WARNING  | btc_trader.strategy._log_decision:196 |   ⚠️ 价格接近4H前高62840压力位，突破失败可能再次回落
+2026-06-11 04:00:31 | WARNING  | btc_trader.strategy._log_decision:196 |   ⚠️ 现有algo止损单在60500，若被触发亏损约(62148-60500)*0.005*10=82.4美元，占总资金5.6%，超过2%单笔止损限制，建议收紧止损至61050
+2026-06-11 04:00:31 | WARNING  | btc_trader.strategy._log_decision:196 |   ⚠️ 大跌后第一个金叉往往会被打掉，需做好止损准备
+2026-06-11 04:00:31 | WARNING  | btc_trader.strategy._log_decision:196 |   ⚠️ 资金费率为负(-0.0008%)，空头付费给多头，轻微利好多头
+2026-06-11 04:00:31 | INFO     | btc_trader.strategy._log_decision:198 | ───────────────────────────────────────────────────────
+2026-06-11 04:00:31 | INFO     | btc_trader.pipeline.run:86 | Step 5: 风控校验
+2026-06-11 04:00:31 | INFO     | btc_trader.pipeline.run:97 | Step 6: 执行操作
+2026-06-11 04:00:31 | INFO     | btc_trader.executor._place_algo_order:120 | Algo挂单成功: 补挂止损(多), type=STOP_MARKET, triggerPrice=61050.0, qty=0.005, algoId=4000001546434253
+2026-06-11 04:00:31 | INFO     | btc_trader.executor.execute_actions:179 | 执行成功: place_stop_loss → success
+2026-06-11 04:00:31 | INFO     | btc_trader.executor._place_algo_order:120 | Algo挂单成功: 补挂止盈(多), type=TAKE_PROFIT_MARKET, triggerPrice=62820.0, qty=0.005, algoId=4000001546434270
+2026-06-11 04:00:31 | INFO     | btc_trader.executor.execute_actions:179 | 执行成功: place_take_profit → success
+2026-06-11 04:00:31 | INFO     | btc_trader.pipeline.run:102 | Step 7: 记录与通知
+2026-06-11 04:00:31 | INFO     | btc_trader.pipeline.run:112 | ========== 流水线完成 trigger=4h 耗时=28.98s actions=3 ==========
+

@@ -1,0 +1,56 @@
+# ===== BTC自动化交易系统配置 =====
+
+binance:
+  api_key: ""
+  api_secret: ""
+  testnet: false                    # 先用测试网
+  symbol: "BTCUSDT"
+  leverage: 10
+  margin_type: "CROSSED"           # CROSSED=全仓 ISOLATED=逐仓
+
+# 通过 OpenRouter 调用 Claude（也可切换其他模型）
+# 注意：也兼容旧 "claude" 段名，但建议改用 "llm"
+llm:
+  api_key: ""
+  model: "anthropic/claude-opus-4.6"
+  max_tokens: 2000
+  temperature: 0
+  max_retries: 3
+  timeout: 60
+  base_url: "https://openrouter.ai/api/v1"
+
+strategy:
+  ema_fast: 15
+  ema_slow: 60
+  macd_fast: 12
+  macd_slow: 26
+  macd_signal: 9
+  rsi_period: 14
+  timeframes: ["4h", "1h", "15m"]
+  kline_limit: 100
+
+risk:
+  max_position_pct: 0.30           # 最大持仓占总资金比
+  max_single_loss_pct: 0.02        # 单笔最大亏损占总资金比
+  max_daily_loss_pct: 0.05         # 日最大亏损
+  max_leverage: 20
+  max_consecutive_losses: 5
+  cooldown_after_stop_sec: 900     # 止损后冷静期15分钟
+  min_stop_distance_pct: 0.003     # 最小止损距离0.3%
+  emergency_stop_margin_ratio: 0.8 # 保证金率超过此值紧急减仓
+  extreme_move_pct: 0.05           # 15分钟波动超5%暂停
+  emergency_stop_loss_pct: 0.05    # 无止损时自动挂的宽止损距离5%
+
+telegram:
+  bot_token: "YOUR_TELEGRAM_BOT_TOKEN"
+  chat_id: "YOUR_CHAT_ID"
+  enabled: false
+
+logging:
+  level: "INFO"
+  file: "logs/trading.log"
+  max_bytes: 104857600             # 100MB
+  backup_count: 10
+
+database:
+  path: "storage/trading.db"

@@ -1,0 +1,71 @@
+name: BTC Trading Bot
+
+on:
+  schedule:
+    # 4H K线收盘: UTC 00:03, 04:03, 08:03, 12:03, 16:03, 20:03
+    - cron: '3 0,4,8,12,16,20 * * *'
+    # 1H K线收盘: 每小时 :08（避开4H的:03）
+    - cron: '8 * * * *'
+  workflow_dispatch:
+    inputs:
+      trigger:
+        description: '手动触发周期'
+        required: true
+        default: '1h'
+        type: choice
+        options:
+          - 4h
+          - 1h
+
+jobs:
+  trade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 安装依赖
+        run: pip install -r requirements.txt
+
+      # 从缓存恢复数据库（保留历史交易记录）
+      - name: 恢复数据库
+        uses: actions/cache@v4
+        with:
+          path: storage/trading.db
+          key: trading-db-${{ github.run_id }}
+          restore-keys: trading-db-
+
+      - name: 确定触发周期
+        id: trigger
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tf=${{ inputs.trigger }}" >> $GITHUB_OUTPUT
+          else
+            # 根据 cron 分钟数判断：:03 是4H，:08 是1H
+            MINUTE=$(date -u +%M)
+            HOUR=$(date -u +%H)
+            if [ "$MINUTE" -le "5" ]; then
+              # 检查是否是4H时间点
+              case "$HOUR" in
+                00|04|08|12|16|20) echo "tf=4h" >> $GITHUB_OUTPUT ;;
+                *) echo "tf=1h" >> $GITHUB_OUTPUT ;;
+              esac
+            else
+              echo "tf=1h" >> $GITHUB_OUTPUT
+            fi
+          fi
+          echo "触发周期: $(cat $GITHUB_OUTPUT)"
+
+      - name: 运行分析
+        env:
+          BINANCE_API_KEY: ${{ secrets.BINANCE_API_KEY }}
+          BINANCE_API_SECRET: ${{ secrets.BINANCE_API_SECRET }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python main.py --trigger ${{ steps.trigger.outputs.tf }}
